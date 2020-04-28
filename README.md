@@ -13,17 +13,17 @@ int displayMenu();
 char enterNames();
 void pieceTracker(player1Name, player2Name);
 int displayBoard(player1Name, player2Name, char piece[]);
-int winCondition(char piece[], int numToConnect);
+int winCondition(char piece[][], int numToConnect);
 void showScores(FILE* filePtr);
 int playAgain();
 
 int main()
 {
     //Variables
-    int menuChoice;
+    int menuChoice, playChoice;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
     int winCondition, numToConnect;
-    char piece[MAX_VALUES];
+    char piece[MAX_VALUES][MAX_VALUES];
     FILE* filePtr;
     
     do{
@@ -56,9 +56,21 @@ int main()
                     printf("Tie game.");
                 }
                 
-                do{
-                    choice = playAgain();
-                }while();
+                // Calls playAgain() function to receive user choice on playing again
+                playChoice = playAgain();
+                
+                // If playerChoice is yes, reset all row and column values to blank
+                if(playChoice == 1)
+                {
+                    for(int row = 0; row < 6; row++)
+                    {
+                    
+                        for (int col = 0; col < 7; col++)
+                        {
+                            piece[row][col] = ' ';
+                        }
+                    }
+                }
                 
             break;
             
@@ -122,11 +134,12 @@ void showScores(FILE* filePtr){
 
 int playAgain(){
     int choice; 
+    
     printf("Play again?\
-        1 - yes\
-        0 - no");
+    1 - yes\
+    0 - no");
     printf("Enter your choice: ");
-    scanf("%d", &choice);
+    scanf("%d", &choice);   
     
     return choice;
 }
