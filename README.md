@@ -12,7 +12,7 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 int displayMenu();
 char enterNames();
 void pieceTracker(player1Name, player2Name);
-int displayBoard(player1Name, player2Name, char piece[]);
+int displayBoard(player1Name, player2Name, char piece[][]);
 int winCondition(char piece[][], int numToConnect);
 void showScores(FILE* filePtr);
 int playAgain();
@@ -120,11 +120,11 @@ void pieceTracker(player1Name, player2Name){
     
 }
 
-int displayBoard(player1Name, player2Name, char piece[]){
+int displayBoard(player1Name, player2Name, char piece[][]){
     
 }
 
-int winCondition(char piece[], int numToConnect){
+int winCondition(char piece[][], int numToConnect){
     
 }
 
