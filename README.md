@@ -121,6 +121,7 @@ void showScores(FILE* filePtr){
 }
 
 int playAgain(){
+    int choice; 
     printf("Play again?\
         1 - yes\
         0 - no");
