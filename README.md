@@ -62,10 +62,10 @@ int main()
                 // If playerChoice is yes, reset all row and column values to blank
                 if(playChoice == 1)
                 {
-                    for(int row = 0; row < numToConnect; row++)
+                    for(int row = 0; row < 6; row++)
                     {
                     
-                        for (int col = 0; col < numToConnect; col++)
+                        for (int col = 0; col < 7; col++)
                         {
                             piece[row][col] = ' ';
                         }
