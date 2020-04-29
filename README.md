@@ -101,6 +101,7 @@ int main()
 
 //Functions
 int displayMenu(){
+    int menuChoice;
     printf("***CONNECT 4***\
         1. Play Game\
         2. Show Scores\
