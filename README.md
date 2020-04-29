@@ -32,7 +32,7 @@ int main()
         switch(menuChoice){
             case 1:
                 //Prompt for player names
-                enterNames();
+                enterNames(player1Name, player2Name);
                 
                 //Ask user how many they want to connect in a row
                 printf("How many do you want to connect in a row? ");
