@@ -112,8 +112,12 @@ int displayMenu(){
     return menuChoice;
 }
 
-char enterNames(){
+void enterNames(char name1[], char name2[]){
+    printf("Player 1, enter your name");
+    scanf("%s", name1);
     
+    printf("Player 2, enter your name");
+    scanf("%s", name2);
 }
 
 void pieceTracker(player1Name, player2Name){
