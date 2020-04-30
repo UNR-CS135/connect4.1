@@ -9,13 +9,13 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 #define MAX_VALUES 100
 
 //Function prototypes
-int displayMenu();
-char enterNames();
-void pieceTracker(player1Name, player2Name);
-int displayBoard(player1Name, player2Name, char piece[][]);
+int displayMenu(int menu);
+void enterNames(char[], char[]);
+void pieceTracker(int player1Name, int player2Name);
+int displayBoard(char[]player1Name, char[]player2Name, char piece[][]);
 int winCondition(char piece[][], int numToConnect);
 void showScores(FILE* filePtr);
-int playAgain();
+int playAgain(int choice);
 
 int main()
 {
