@@ -122,6 +122,8 @@ void enterNames(char name1[], char name2[]){
 }
 
 void pieceTracker(player1Name, player2Name){
+    printf("%s you'll be X's\n", player1Name);
+    printf("%s you'll be O's\n", player2Name);
     
 }
 
