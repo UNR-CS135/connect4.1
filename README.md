@@ -11,8 +11,8 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 //Function prototypes
 int displayMenu();
 char enterNames();
-void pieceTracker(char player1Name[], char player2Name[]);
-int displayBoard(char player1Name[], char player2Name[], char piece[][]);
+void pieceTracker(player1Name, player2Name);
+int displayBoard(player1Name, player2Name, char piece[][]);
 int winCondition(char piece[][], int numToConnect);
 void showScores(FILE* filePtr);
 int playAgain();
@@ -22,7 +22,7 @@ int main()
     //Variables
     int menuChoice, playChoice;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
-    int winCondition, numToConnect;
+    int winner, numToConnect;
     char piece[MAX_VALUES][MAX_VALUES];
     FILE* filePtr;
     
