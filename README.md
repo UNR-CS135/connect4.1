@@ -9,13 +9,13 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 #define MAX_VALUES 100
 
 //Function prototypes
-int displayMenu(int menu);
-void enterNames(char[], char[]);
-void pieceTracker(int player1Name, int player2Name);
-int displayBoard(char[]player1Name, char[]player2Name, char piece[][]);
-int winCondition(char piece[][], int numToConnect);
+int displayMenu();
+void enterNames(char name1[], char name2[]);
+void pieceTracker(char player1Name[], char player2Name[]);
+int displayBoard(char player1Name[], char player2Name[], char piece[6][7]);
+int winCondition(char piece[6][7], int numToConnect);
 void showScores(FILE* filePtr);
-int playAgain(int choice);
+int playAgain();
 
 int main()
 {
@@ -23,7 +23,7 @@ int main()
     int menuChoice, playChoice;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
     int winner, numToConnect;
-    char piece[MAX_VALUES][MAX_VALUES];
+    char piece[6][7];
     FILE* filePtr;
     
     do{
@@ -78,6 +78,7 @@ int main()
                 //Check if file can be opened. If successful, show scores.
                 if((filePtr = fopen(FILE_NAME, "r")) == NULL){
                     printf("Sorry, can't open the file.\n");
+                    return -1;
                 }else{
                    while(!feof(filePtr)){
                        showScores(filePtr);
@@ -102,10 +103,10 @@ int main()
 //Functions
 int displayMenu(){
     int menuChoice;
-    printf("***CONNECT 4***\
-        1. Play Game\
-        2. Show Scores\
-        0. EXIT");
+    printf("***CONNECT 4***\n");
+    printf("1. Play Game\n");
+    printf("2. Show Scores\n");
+    printf("0. EXIT\n");
         
     printf("Enter your choice: ");
     scanf("%d", &menuChoice);
@@ -114,24 +115,24 @@ int displayMenu(){
 }
 
 void enterNames(char name1[], char name2[]){
-    printf("Player 1, enter your name");
+    printf("Player 1, enter your name: ");
     scanf("%s", name1);
     
-    printf("Player 2, enter your name");
+    printf("Player 2, enter your name: ");
     scanf("%s", name2);
 }
 
-void pieceTracker(player1Name, player2Name){
+void pieceTracker(char player1Name[], char player2Name[]){
     printf("%s you'll be X's\n", player1Name);
     printf("%s you'll be O's\n", player2Name);
     
 }
 
-int displayBoard(player1Name, player2Name, char piece[][]){
+int displayBoard(char player1Name[],char player2Name[], char piece[6][7]){
     
 }
 
-int winCondition(char piece[][], int numToConnect){
+int winCondition(char piece[6][7], int numToConnect){
     
 }
 
@@ -150,3 +151,4 @@ int playAgain(){
     
     return choice;
 }
+
