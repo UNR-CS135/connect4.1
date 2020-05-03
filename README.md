@@ -6,6 +6,7 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 #include <string.h>
 
 #define FILE_NAME "scores.txt"
+#define OUTPUT_FILE "sortedScores.txt"
 #define MAX_VALUES 100
 
 //Function prototypes
@@ -14,17 +15,18 @@ void enterNames(char name1[], char name2[]);
 void pieceTracker(char player1Name[], char player2Name[]);
 void displayBoard(int turnCounter, char player1Name[], char player2Name[], char piece[6][7]);
 int winCondition(int turnCounter, char piece[6][7], int numToConnect);
-void showScores(FILE* filePtr);
+void showScores(FILE* filePtr1, FILE* filePtr2);
 int playAgain();
 
 int main()
 {
     //Variables
-    int menuChoice, playChoice;
+    int menuChoice, playChoice, wins;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
     int winner, numToConnect, turnCounter = 1;
     char piece[6][7];
-    FILE* filePtr;
+    FILE* filePtr1;
+    FILE* filePtr2;
     
     do{
         menuChoice = displayMenu();
@@ -72,46 +74,65 @@ int main()
                     {
                       turnCounter = 1;
                     }
-                }while(winner != 1 && winner != -1);
                 
-                //If someone wins, congratulate them. If there's a tie, say so.
-                if(winner == 1){
-                    printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
-                    filePtr = fopen(FILE_NAME, "r");
-                    fprintf(filePtr, "%s: 1", winnerName);
-                    fclose(filePtr);
-                }else if(winner == -1){
-                    printf("Tie game.\n");
-                }
-                
-                // Calls playAgain() function to receive user choice on playing again
-                playChoice = playAgain();
-                
-                // If playerChoice is yes, reset all row and column values to blank
-                if(playChoice == 1)
-                {
-                    for(int row = 0; row < 6; row++)
-                    {
-                    
-                        for (int col = 0; col < 7; col++)
-                        {
-                            piece[row][col] = ' ';
-                        }
+                    //If someone wins, congratulate them. If there's a tie, say so.
+                    if(winner == 1){
+                        printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
+                        wins++;
+                    }else if(winner == -1){
+                        printf("Tie game.\n");
                     }
-                }
-                
+                    
+                    // Calls playAgain() function to receive user choice on playing again
+                    if(winner != 0)
+                    {
+                      playChoice = playAgain();
+                      
+                      // If playerChoice is yes, reset all row and column values to blank otherwise output to file
+                      if(playChoice == 1)
+                      {
+                          for(int row = 0; row < 6; row++)
+                          {
+                          
+                              for (int col = 0; col < 7; col++)
+                              {
+                                  piece[row][col] = ' ';
+                              }
+                          }
+
+                          winner = 0;
+                          turnCounter = 1;
+                          playChoice = 0;
+                      }
+                      else
+                      {
+                        filePtr1 = fopen(FILE_NAME, "w");
+                        filePtr2 = fopen(OUTPUT_FILE, "w");
+                        fprintf(filePtr1, "%s: %d\n", winnerName, wins);
+                        fclose(filePtr1);
+                        fclose(filePtr2);
+                        wins = 0;
+                      }
+                    }
+                }while(winner != 1 && winner != -1);
             break;
             
             case 2:
-                //Check if file can be opened. If successful, show scores.
-                if((filePtr = fopen(FILE_NAME, "r")) == NULL){
-                    printf("Sorry, can't open the file.\n");
-                    return -1;
-                }else{
-                   while(!feof(filePtr)){
-                       showScores(filePtr);
-                   }
-                }fclose(filePtr);
+                //Shows scores
+                if((filePtr1 = fopen(FILE_NAME, "r")) == NULL)
+                {
+                  fopen(FILE_NAME, "w");
+                  fopen(OUTPUT_FILE, "w");
+                }
+
+                filePtr1 = fopen(FILE_NAME, "r");
+                filePtr2 = fopen(OUTPUT_FILE, "r");
+
+                showScores(filePtr1, filePtr2);
+
+                fclose(filePtr1);
+                fclose(filePtr2);
+
             break;
             
             case 0:
@@ -143,11 +164,20 @@ int displayMenu(){
 }
 
 void enterNames(char name1[], char name2[]){
+
     printf("Player 1, enter your name: ");
     scanf("%s", name1);
-    
+
     printf("Player 2, enter your name: ");
+    if(scanf("%s", name2) != 0)
+    {
+    printf("*********************\n");
+    }
+    else
+    {
     scanf("%s", name2);
+    }
+
 
 }
 
@@ -332,18 +362,43 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
     return win;
 }
 
-void showScores(FILE* filePtr){
- int wins;
- char name[MAX_VALUES];
+void showScores(FILE* filePtr1, FILE* filePtr2){
+ int wins[MAX_VALUES], size = 0, tempW = 0;
+ char name[MAX_VALUES][MAX_VALUES], tempN[MAX_VALUES];
 
-  for (int i = 0; i < 10; i--)
-    {
-      while (fscanf (filePtr, "%s: %d", &name[i], &wins) == 2)
+ printf("**HIGH SCORES**\n");
+
+  while (fscanf (filePtr1, "%s: %d\n", &name[MAX_VALUES - 1][size], &wins[size]) == 2)
 	{
-	  printf ("%s: %d\n");
+    size++;
 	}
+
+  for(int i = 0; i < size - 1; i++)
+  {
+    for(int j = 0; j < size - 1; j++)
+    {
+      if(wins[j] > wins[j+1])
+      {
+        tempW = wins[j];
+        tempN[MAX_VALUES - 1] = name[MAX_VALUES - 1][j];
+        wins[j] = wins[j+1];
+        name[MAX_VALUES - 1][j] = name[MAX_VALUES - 1][j+1];
+        wins[j+1] = tempW;
+        name[MAX_VALUES - 1][j+1] = tempN[MAX_VALUES - 1];
+      }
     }
-    
+  }
+
+  for(int i = 0; i < size; i++)
+  {
+    fprintf(filePtr2, "%s: %d\n", name[MAX_VALUES - 1][i], wins[i]);
+  }
+
+
+  for(int i = 0; i < size; i++)
+  {
+    fscanf(filePtr2, "%s: %d\n", &name[MAX_VALUES - 1][i], &wins[i]);
+  }
 }
 
 int playAgain(){
@@ -357,3 +412,4 @@ int playAgain(){
     
     return choice;
 }
+
