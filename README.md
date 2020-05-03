@@ -332,6 +332,16 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
 }
 
 void showScores(FILE* filePtr){
+ int wins;
+ char name[];
+
+  for (i = 0; i < 10; i--)
+    {
+      while (fscanf (filePtr, "%s: %d", &name[], &wins) == 2)
+	{
+	  printf ("%s: %d\n");
+	}
+    }
     
 }
 
