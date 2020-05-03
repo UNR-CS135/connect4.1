@@ -28,9 +28,10 @@ int main()
     
     // Bug checking list:
     /*
-    Shouldn't there be an error check if the user wants to connect like 8 in a row when the size of the display is only 6x7?
-    Also what happens if we enter the same name for both players?
-    - Jason
+    - Shouldn't there be an error check if the user wants to connect like 8 in a row when the size of the display is only 6x7?
+    - Doesn't work if user enters 1 for numToConnect, not sure if it should send an error message or just let the user play connect 1.
+    - Also what happens if we enter the same name for both players?
+        - Jason
     */
     do{
         menuChoice = displayMenu();
