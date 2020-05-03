@@ -26,13 +26,6 @@ int main()
     char piece[6][7];
     FILE* filePtr;
     
-    // Bug checking list:
-    /*
-    - Shouldn't there be an error check if the user wants to connect like 8 in a row when the size of the display is only 6x7?
-    - Doesn't work if user enters 1 for numToConnect, not sure if it should send an error message or just let the user play connect 1.
-    - Also what happens if we enter the same name for both players?
-        - Jason
-    */
     do{
         menuChoice = displayMenu();
         
@@ -44,6 +37,14 @@ int main()
                 //Ask user how many they want to connect in a row
                 printf("How many do you want to connect in a row? ");
                 scanf("%d", &numToConnect);
+
+                // While loop that checks for correct input
+                while(numToConnect > 7 || numToConnect <= 1)
+                {
+                  //Ask user how many they want to connect in a row
+                  printf("Error, please enter a valid number (From 2 to 7): ");
+                  scanf("%d", &numToConnect);
+                }
                 
                 //Assign each player their piece
                 pieceTracker(player1Name, player2Name);
@@ -333,11 +334,11 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
 
 void showScores(FILE* filePtr){
  int wins;
- char name[];
+ char name[MAX_VALUES];
 
-  for (i = 0; i < 10; i--)
+  for (int i = 0; i < 10; i--)
     {
-      while (fscanf (filePtr, "%s: %d", &name[], &wins) == 2)
+      while (fscanf (filePtr, "%s: %d", &name[i], &wins) == 2)
 	{
 	  printf ("%s: %d\n");
 	}
