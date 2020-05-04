@@ -336,7 +336,7 @@ void showScores(FILE* filePtr){
  int wins;
  char name[MAX_VALUES];
 
-  for (int i = 0; i < 10; i--)
+  for (int i = 0; i < 10; i++)
     {
       while (fscanf (filePtr, "%s: %d", &name[i], &wins) == 2)
 	{
