@@ -25,12 +25,16 @@ int main()
     int winner, numToConnect, turnCounter = 1;
     char piece[6][7];
     FILE* filePtr;
-    
-    // Buglist:
-    /*
-    1. Name thing with the stars
-    2. Files
-    */
+
+
+    // Double for statement that sets pieces to a blank slate
+    for(int row = 0; row < 6; row++)
+    {
+      for(int col = 0; col < 7; col++)
+      {
+          piece[row][col] = ' ';
+      }
+    }
     
     do{
         menuChoice = displayMenu();
