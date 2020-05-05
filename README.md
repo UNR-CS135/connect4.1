@@ -105,8 +105,8 @@ int main()
                         printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
                         wins++;
                     }else if(winner == -1){
-
-                        printf("Tie game.\n");
+                        displayBoard(winner, turnCounter, player1Name, player2Name, piece);
+                        printf("It's a tie! Try again...\n");
                     }
 
                   // Calls playAgain() function to receive user choice on playing again
