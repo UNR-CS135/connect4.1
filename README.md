@@ -141,15 +141,28 @@ int main()
                         }
 
                         // Outputs to the file
-                        if(winsP2 > winsP1)
+                        if(winsP2 > winsP1 && winsP2 > 0 && winsP1 > 0)
                         {
                         fprintf(filePtr, "%s: %d\n", player2Name, winsP2);
                         fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
                         }
-                        else
+                        else if(winsP1 > winsP2 && winsP1 > 0 && winsP2 > 0)
                         {
                         fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
                         fprintf(filePtr, "%s: %d\n", player2Name, winsP2);
+                        }
+                        else if(winsP1 == winsP2 && winsP1 > 0)
+                        {
+                        fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
+                        fprintf(filePtr, "%s: %d\n", player2Name, winsP2);
+                        }
+                        else if(winsP1 > 0)
+                        {
+                        fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
+                        }
+                        else if(winsP2 > 0)
+                        {
+                        fprintf(filePtr, "%s: %d\n", player1Name, winsP2);
                         }
 
                         fclose(filePtr);
@@ -169,10 +182,10 @@ int main()
                 filePtr = fopen(FILE_NAME, "r");
                 if(filePtr == NULL)
                 {
-                  printf("output");
                   filePtr = fopen(FILE_NAME, "w");
                   fclose(filePtr);
                 }
+                fclose(filePtr);
 
                 filePtr = fopen(FILE_NAME, "r");
 
@@ -439,7 +452,7 @@ void showScores(FILE* filePtr){
 int wins;
 char name[MAX_VALUES];
 
- printf("**HIGH SCORES**\n");
+ printf("**HIGH SCORES**\n\n");
 
   while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES], &wins) == 2)
   {
