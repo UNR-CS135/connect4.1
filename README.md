@@ -458,18 +458,10 @@ void showScores(FILE* filePtr)
  
   printf("**HIGH SCORES**\n\n");
 
-  while(fgetc(filePtr) != EOF)
-  {
-    fscanf(filePtr, "%s %d\n", nameP, &tempW);
-    nameP++;
-    tempN[size] = tempW;
-    size++;
-  }
-
-  /*
   // Copies all the names over
-  while(fgetc(filePtr) != EOF)
+  while(size != 1)
   {
+    /*
     while(temp != ':')
     {
       fscanf(filePtr, "%c", &temp);
@@ -496,8 +488,12 @@ void showScores(FILE* filePtr)
     {
       break;
     }
+    */
+
+    fscanf(filePtr, "%s%d\n", nameP, &tempW);
+    winsA[size] = tempW;
+    size++;
   }
-  */
 
   nameP = 0;
 
