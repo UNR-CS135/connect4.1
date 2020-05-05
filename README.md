@@ -82,16 +82,17 @@ int main()
                           for(int i = 0; i < MAX_VALUES; i++)
                           {
                             winnerName[i] = player1Name[i];
-                            winsP1++;
                           }
+                          winsP1++;
                         }
                         else if(turnCounter == 2)
                         {
                           for(int i = 0; i < MAX_VALUES; i++)
                           {
                             winnerName[i] = player2Name[i];
-                            winsP2++;
-                          }                          
+
+                          }
+                          winsP2++;                     
                         }
 
                         printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
@@ -184,15 +185,16 @@ int main()
                 {
                   filePtr = fopen(FILE_NAME, "w");
                   fclose(filePtr);
+                  filePtr = fopen(FILE_NAME, "r");
+                  showScores(filePtr);
+                  fclose(filePtr);
                 }
+                else
+                {
+                  showScores(filePtr);
+                }
+
                 fclose(filePtr);
-
-                filePtr = fopen(FILE_NAME, "r");
-
-                showScores(filePtr);
-
-                fclose(filePtr);
-
             break;
             
             case 0:
@@ -448,54 +450,81 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
     return win;
 }
 
-void showScores(FILE* filePtr){
-int wins;
-char name[MAX_VALUES];
+void showScores(FILE* filePtr)
+{
+  // Variable Declaration
+  int wins = 0, winsA[MAX_VALUES], size = 0, tempW = 0;
+  char name[MAX_VALUES], tempN[MAX_VALUES], *nameP = name, temp = ' ';
+ 
+  printf("**HIGH SCORES**\n\n");
 
- printf("**HIGH SCORES**\n\n");
-
-  while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES], &wins) == 2)
+  while(fgetc(filePtr) != EOF)
   {
-    printf("%s: %d\n", name, wins);
+    fscanf(filePtr, "%s %d\n", nameP, &tempW);
+    nameP++;
+    tempN[size] = tempW;
+    size++;
   }
 
-/*
- int wins[MAX_VALUES], size = 0, tempW = 0;
- char name[MAX_VALUES][MAX_VALUES], tempN[MAX_VALUES];
+  /*
+  // Copies all the names over
+  while(fgetc(filePtr) != EOF)
+  {
+    while(temp != ':')
+    {
+      fscanf(filePtr, "%c", &temp);
+      int i = 0;
+      tempN[i] = temp;
+      i++;
+    }
 
-  while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES - 1][size], &wins[size]) == 2)
-	{
-    size++;
-	}
+    nameP = tempN;
+    nameP++;
+    for(int i = 0; i < MAX_VALUES; i++)
+    {
+      tempN[i] = (' ');
+    }
+
+
+    if(fscanf(filePtr, " %d\n", &wins) == 1)
+    {
+      winsA[size] = wins;
+      size++;
+    }
+
+    if(fgetc(filePtr) == EOF)
+    {
+      break;
+    }
+  }
+  */
+
+  nameP = 0;
 
   for(int i = 0; i < size - 1; i++)
   {
     for(int j = 0; j < size - 1; j++)
     {
-      if(wins[j] > wins[j+1])
+      if(winsA[j] > winsA[j+1])
       {
-        tempW = wins[j];
-        tempN[MAX_VALUES - 1] = name[MAX_VALUES - 1][j];
-        wins[j] = wins[j+1];
-        name[MAX_VALUES - 1][j] = name[MAX_VALUES - 1][j+1];
-        wins[j+1] = tempW;
-        name[MAX_VALUES - 1][j+1] = tempN[MAX_VALUES - 1];
+        tempW = winsA[j];
+        tempN[MAX_VALUES - 1] = *(nameP+j);
+        winsA[j] = winsA[j+1];
+        *(nameP+j) = *(nameP+j+1);
+        winsA[j+1] = tempW;
+        *(nameP+j+1) = tempN[MAX_VALUES - 1];
       }
     }
   }
 
-  for(int i = 0; i < size; i++)
-  {
-    fprintf(filePtr, "%s: %d\n", name[MAX_VALUES - 1][i], wins[i]);
-  }
-
+  nameP = 0;
 
   for(int i = 0; i < size; i++)
   {
-    fscanf(filePtr, "%s: %d\n", &name[MAX_VALUES - 1][i], &wins[i]);
+    printf("%s: %d\n", nameP, winsA[i]);
+    nameP++;
   }
 
-*/
 }
 
 int playAgain(){
