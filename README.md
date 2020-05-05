@@ -20,21 +20,11 @@ int playAgain();
 int main()
 {
     //Variables
-    int menuChoice = 0, playChoice = 0, wins = 0;
+    int menuChoice = 0, playChoice = 0, winsP1 = 0, winsP2 = 0;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
-    int winner, numToConnect, turnCounter = 1;
+    int winner = 0, numToConnect = 0, turnCounter = 1;
     char piece[6][7];
     FILE* filePtr;
-
-
-    // Double for statement that sets pieces to a blank slate
-    for(int row = 0; row < 6; row++)
-    {
-      for(int col = 0; col < 7; col++)
-      {
-          piece[row][col] = ' ';
-      }
-    }
     
     do{
         menuChoice = displayMenu();
@@ -92,6 +82,7 @@ int main()
                           for(int i = 0; i < MAX_VALUES; i++)
                           {
                             winnerName[i] = player1Name[i];
+                            winsP1++;
                           }
                         }
                         else if(turnCounter == 2)
@@ -99,11 +90,11 @@ int main()
                           for(int i = 0; i < MAX_VALUES; i++)
                           {
                             winnerName[i] = player2Name[i];
+                            winsP2++;
                           }                          
                         }
 
                         printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
-                        wins++;
                     }else if(winner == -1){
                         displayBoard(winner, turnCounter, player1Name, player2Name, piece);
                         printf("It's a tie! Try again...\n");
@@ -139,10 +130,31 @@ int main()
                       }
                       else
                       {
-                        filePtr = fopen(FILE_NAME, "w");
-                        fprintf(filePtr, "%s: %d\n", winnerName, wins);
+                        // Checks if file can be opened and will create a file or output to a file accordingly
+                        if((filePtr = fopen(FILE_NAME, "r")) == NULL)
+                        {
+                          filePtr = fopen(FILE_NAME, "w");
+                        }
+                        else
+                        {
+                          filePtr = fopen(FILE_NAME, "a");
+                        }
+
+                        // Outputs to the file
+                        if(winsP2 > winsP1)
+                        {
+                        fprintf(filePtr, "%s: %d\n", player2Name, winsP2);
+                        fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
+                        }
+                        else
+                        {
+                        fprintf(filePtr, "%s: %d\n", player1Name, winsP1);
+                        fprintf(filePtr, "%s: %d\n", player2Name, winsP2);
+                        }
+
                         fclose(filePtr);
-                        wins = 0;
+                        winsP1 = 0;
+                        winsP2 = 0;
                         winner = 0;
                         break;
                         }
@@ -424,10 +436,19 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
 }
 
 void showScores(FILE* filePtr){
- int wins[MAX_VALUES], size = 0, tempW = 0;
- char name[MAX_VALUES][MAX_VALUES], tempN[MAX_VALUES];
+int wins;
+char name[MAX_VALUES];
 
  printf("**HIGH SCORES**\n");
+
+  while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES], &wins) == 2)
+  {
+    printf("%s: %d\n", name, wins);
+  }
+
+/*
+ int wins[MAX_VALUES], size = 0, tempW = 0;
+ char name[MAX_VALUES][MAX_VALUES], tempN[MAX_VALUES];
 
   while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES - 1][size], &wins[size]) == 2)
 	{
@@ -460,6 +481,8 @@ void showScores(FILE* filePtr){
   {
     fscanf(filePtr, "%s: %d\n", &name[MAX_VALUES - 1][i], &wins[i]);
   }
+
+*/
 }
 
 int playAgain(){
