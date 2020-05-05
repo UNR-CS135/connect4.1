@@ -459,7 +459,7 @@ void showScores(FILE* filePtr)
   printf("**HIGH SCORES**\n\n");
 
   // Copies all the names over
-  while(size != 1)
+  while(feof(filePtr) == 0)
   {
     /*
     while(temp != ':')
