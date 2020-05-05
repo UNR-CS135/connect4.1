@@ -20,7 +20,7 @@ int playAgain();
 int main()
 {
     //Variables
-    int menuChoice, playChoice, wins;
+    int menuChoice = 0, playChoice = 0, wins = 0;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
     int winner, numToConnect, turnCounter = 1;
     char piece[6][7];
@@ -28,10 +28,8 @@ int main()
     
     // Buglist:
     /*
-    1. Diagonal going up
-    2. Diagonal going down
-    5. Files
-
+    1. Name thing with the stars
+    2. Files
     */
     
     do{
@@ -125,8 +123,15 @@ int main()
                           }
 
                           winner = 0;
-                          turnCounter = 1;
                           playChoice = 0;
+                          if(turnCounter == 1 && winner == 0)
+                          {
+                            turnCounter = 2;
+                          }
+                          else if (turnCounter == 2 && winner == 0)
+                          {
+                            turnCounter = 1;
+                          }
                       }
                       else
                       {
