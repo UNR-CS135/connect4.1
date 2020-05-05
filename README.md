@@ -12,7 +12,7 @@ Purpose: Allow the user to play a simplified version of Connect 4*/
 int displayMenu();
 void enterNames(char name1[], char name2[]);
 void pieceTracker(char player1Name[], char player2Name[]);
-void displayBoard(int turnCounter, char player1Name[], char player2Name[], char piece[6][7]);
+void displayBoard(int winner, int turnCounter, char player1Name[], char player2Name[], char piece[6][7]);
 int winCondition(int turnCounter, char piece[6][7], int numToConnect);
 void showScores(FILE* filePtr);
 int playAgain();
@@ -20,11 +20,19 @@ int playAgain();
 int main()
 {
     //Variables
-    int menuChoice, playChoice;
+    int menuChoice, playChoice, wins;
     char winnerName[MAX_VALUES], player1Name[MAX_VALUES], player2Name[MAX_VALUES];
     int winner, numToConnect, turnCounter = 1;
     char piece[6][7];
     FILE* filePtr;
+    
+    // Buglist:
+    /*
+    1. Diagonal going up
+    2. Diagonal going down
+    5. Files
+
+    */
     
     do{
         menuChoice = displayMenu();
@@ -60,58 +68,97 @@ int main()
 
                 //Begin playing
                 do{
-                    displayBoard(turnCounter, player1Name, player2Name, piece);
+                    displayBoard(winner, turnCounter, player1Name, player2Name, piece);
 
                     winner = winCondition(turnCounter, piece, numToConnect);
 
-                    if(turnCounter == 1)
+                    if(turnCounter == 1 && winner == 0)
                     {
                       turnCounter = 2;
                     }
-                    else if (turnCounter == 2)
+                    else if (turnCounter == 2 && winner == 0)
                     {
                       turnCounter = 1;
                     }
-                }while(winner != 1 && winner != -1);
                 
-                //If someone wins, congratulate them. If there's a tie, say so.
-                if(winner == 1){
-                    printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
-                    filePtr = fopen(FILE_NAME, "r");
-                    fprintf(filePtr, "%s: 1", winnerName);
-                    fclose(filePtr);
-                }else if(winner == -1){
-                    printf("Tie game.\n");
-                }
-                
-                // Calls playAgain() function to receive user choice on playing again
-                playChoice = playAgain();
-                
-                // If playerChoice is yes, reset all row and column values to blank
-                if(playChoice == 1)
-                {
-                    for(int row = 0; row < 6; row++)
-                    {
-                    
-                        for (int col = 0; col < 7; col++)
+                    //If someone wins, congratulate them. If there's a tie, say so.
+                    if(winner == 1){
+                        displayBoard(winner, turnCounter, player1Name, player2Name, piece);
+
+                        if(turnCounter == 1)
                         {
-                            piece[row][col] = ' ';
+                          for(int i = 0; i < MAX_VALUES; i++)
+                          {
+                            winnerName[i] = player1Name[i];
+                          }
                         }
+                        else if(turnCounter == 2)
+                        {
+                          for(int i = 0; i < MAX_VALUES; i++)
+                          {
+                            winnerName[i] = player2Name[i];
+                          }                          
+                        }
+
+                        printf("%s YOU WON!!! CONGRATS :D\n", winnerName);
+                        wins++;
+                    }else if(winner == -1){
+
+                        printf("Tie game.\n");
                     }
-                }
-                
+
+                  // Calls playAgain() function to receive user choice on playing again
+                  if(winner != 0)
+                  {
+                    playChoice = playAgain();
+                        
+                      // If playerChoice is yes, reset all row and column values to blank otherwise output to file
+                      if(playChoice == 1)
+                      {
+                          for(int row = 0; row < 6; row++)
+                          {
+                            
+                            for (int col = 0; col < 7; col++)
+                            {
+                                piece[row][col] = ' ';
+                            }
+                          }
+
+                          winner = 0;
+                          turnCounter = 1;
+                          playChoice = 0;
+                      }
+                      else
+                      {
+                        filePtr = fopen(FILE_NAME, "w");
+                        fprintf(filePtr, "%s: %d\n", winnerName, wins);
+                        fclose(filePtr);
+                        wins = 0;
+                        winner = 0;
+                        break;
+                        }
+                      }
+                }while(winner != 1 && winner != -1);
+
+
             break;
             
             case 2:
-                //Check if file can be opened. If successful, show scores.
-                if((filePtr = fopen(FILE_NAME, "r")) == NULL){
-                    printf("Sorry, can't open the file.\n");
-                    return -1;
-                }else{
-                   while(!feof(filePtr)){
-                       showScores(filePtr);
-                   }
-                }fclose(filePtr);
+                //Shows scores
+                filePtr = fopen(FILE_NAME, "r");
+                if(filePtr == NULL)
+                {
+                  printf("output");
+                  filePtr = fopen(FILE_NAME, "w");
+                  fclose(filePtr);
+                }
+
+                filePtr = fopen(FILE_NAME, "r");
+
+                showScores(filePtr);
+
+                fclose(filePtr);
+
             break;
             
             case 0:
@@ -143,11 +190,20 @@ int displayMenu(){
 }
 
 void enterNames(char name1[], char name2[]){
+
     printf("Player 1, enter your name: ");
     scanf("%s", name1);
-    
+
     printf("Player 2, enter your name: ");
+    if(scanf("%s", name2) != 0)
+    {
+    printf("*********************\n");
+    }
+    else
+    {
     scanf("%s", name2);
+    }
+
 
 }
 
@@ -157,7 +213,7 @@ void pieceTracker(char player1Name[], char player2Name[]){
     printf("%s you'll be O's\n", player2Name); 
 }
 
-void displayBoard(int turnCounter, char player1Name[],char player2Name[], char piece[6][7]){
+void displayBoard(int winner, int turnCounter, char player1Name[],char player2Name[], char piece[6][7]){
     // Variable declaration
     int move = 0, movePossible = 0;
     char movePiece = ' ';
@@ -188,17 +244,25 @@ void displayBoard(int turnCounter, char player1Name[],char player2Name[], char p
     printf("[1][2][3][4][5][6][7]\n");  
 
     // Asks player to input a move
-    if(turnCounter == 1)
+    if(turnCounter == 1 && winner == 0)
     {
       printf("%s - Enter your move: ", player1Name);
       scanf("%d", &move);
     }
-    else if (turnCounter == 2)
+    else if (turnCounter == 2 && winner == 0)
     {
       printf("%s - Enter your move: ", player2Name);
       scanf("%d", &move);
     }
 
+    // Checks if user entered value is possible
+    while((winner == 0 && move < 1) ||(winner == 0 && move > 7))
+    {
+      printf("Please enter a valid move: ");
+      scanf("%d", &move);    
+    }
+
+    // Checks if the board is filled
     while(movePossible == 0)
     {
       // Converts user move to array storage format
@@ -226,7 +290,7 @@ void displayBoard(int turnCounter, char player1Name[],char player2Name[], char p
 
 int winCondition(int turnCounter, char piece[6][7], int numToConnect){
     // Variable declaration
-    int win = 0, connected = 0, filled = 0;
+    int win = 0, connected = 1, filled = 0;
     char movePiece = ' ';
 
     // Sets which piece is being checked
@@ -247,72 +311,90 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
         // Checks top, right, and top-right for more of the same pieces of the player
         if(piece[row][col] == movePiece)
         {
+          // Variable declarations
+          int i = row;
+          int j = col;
+
           // Checks for a column match
-          if(piece[row-1][col] == movePiece && row > (6 - numToConnect))
+          while(piece[i-1][j] == movePiece)
           {
-            for(int i = row; i >= 0; i--)
-            {
-              if(piece[i][col] == movePiece)
-              {
-                connected++;
-              }
-            }
-
-            // Resets connected if no win condition met, if win condition met sets win to the player being checked
-            if(connected != numToConnect)
-            {
-              connected = 0;
-            }
-            else if (connected == numToConnect)
-            {
-              win = 1;
-            }
+            connected++;
+            i--;
           }
+          // Resets connected if no win condition met, if win condition met sets win to the player being checked
+          if(connected != numToConnect)
+          {
+            connected = 1;
+          }
+          else if (connected == numToConnect)
+          {
+            win = 1;
+          }
+
+          // Resets check
+          i = row;
+          j = col;
+
           // Checks for a row match
-          else if(piece[row][col+1] == movePiece && col < (7 - numToConnect))
+          while(piece[i][j+1] == movePiece)
           {
-            for(int i = col; i < 7; i++)
-            {
-              if(piece[row][i] == movePiece)
-              {
-                connected++;
-              }
-            }
-
-            // Resets connected if no win condition met, if win condition met sets win to the player being checked
-            if(connected != numToConnect)
-            {
-              connected = 0;
-            }
-            else if (connected == numToConnect)
-            {
-              win = 1;
-            }
+            connected++;
+            j++;
           }
-          // Checks for a diagonal match
-          else if(piece[row-1][col+1] == movePiece && row > (6 - numToConnect) && col < (7 - numToConnect))
+
+          // Resets connected if no win condition met, if win condition met sets win to the player being checked
+          if(connected != numToConnect)
           {
-            for(int i = row; i >= 0; i--)
-            {
-              for(int j = col; j < 7; j++)
-              {
-                if(piece[i][j] == movePiece)
-                {
-                  connected++;
-                }
-              }
-            }
-
-            // Resets connected if no win condition met, if win condition met sets win to the player being checked
-            if(connected != numToConnect)
-            {
-              connected = 0;
-            }
-            else if (connected == numToConnect)
-            {
-              win = 1;
-            }
+            connected = 1;
           }
+          else if (connected == numToConnect)
+          {
+            win = 1;
+          }
+
+          // Resets check
+          i = row;
+          j = col;
+
+          // Checks for a topside diagonal match
+          while(piece[i-1][j+1] == movePiece)
+          {
+            connected++;
+            i--;
+            j++;
+          }
+
+          // Resets connected if no win condition met, if win condition met sets win to the player being checked
+          if(connected != numToConnect)
+          {
+            connected = 1;
+          }
+          else if (connected == numToConnect)
+          {
+            win = 1;
+          }
+
+          // Resets check
+          i = row;
+          j = col;
+
+          // Checks for a botside diagonal match
+          while(piece[i+1][j+1] == movePiece)
+          {
+            connected++;
+            i++;
+            j++;
+          }
+
+           // Resets connected if no win condition met, if win condition met sets win to the player being checked
+          if(connected != numToConnect)
+          {
+            connected = 1;
+          }
+          else if (connected == numToConnect)
+          {
+            win = 1;
+          }         
         }
         
         // Checks if board is entirely filled
@@ -333,17 +415,42 @@ int winCondition(int turnCounter, char piece[6][7], int numToConnect){
 }
 
 void showScores(FILE* filePtr){
- int wins;
- char name[MAX_VALUES];
+ int wins[MAX_VALUES], size = 0, tempW = 0;
+ char name[MAX_VALUES][MAX_VALUES], tempN[MAX_VALUES];
 
-  for (int i = 0; i < 10; i++)
-    {
-      while (fscanf (filePtr, "%s: %d", &name[i], &wins) == 2)
+ printf("**HIGH SCORES**\n");
+
+  while (fscanf (filePtr, "%s: %d\n", &name[MAX_VALUES - 1][size], &wins[size]) == 2)
 	{
-	  printf ("%s: %d\n");
+    size++;
 	}
+
+  for(int i = 0; i < size - 1; i++)
+  {
+    for(int j = 0; j < size - 1; j++)
+    {
+      if(wins[j] > wins[j+1])
+      {
+        tempW = wins[j];
+        tempN[MAX_VALUES - 1] = name[MAX_VALUES - 1][j];
+        wins[j] = wins[j+1];
+        name[MAX_VALUES - 1][j] = name[MAX_VALUES - 1][j+1];
+        wins[j+1] = tempW;
+        name[MAX_VALUES - 1][j+1] = tempN[MAX_VALUES - 1];
+      }
     }
-    
+  }
+
+  for(int i = 0; i < size; i++)
+  {
+    fprintf(filePtr, "%s: %d\n", name[MAX_VALUES - 1][i], wins[i]);
+  }
+
+
+  for(int i = 0; i < size; i++)
+  {
+    fscanf(filePtr, "%s: %d\n", &name[MAX_VALUES - 1][i], &wins[i]);
+  }
 }
 
 int playAgain(){
