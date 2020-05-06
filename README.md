@@ -201,7 +201,7 @@ int main()
             break;
             
             default:
-                printf("Please enter a valid option.");
+                printf("Please enter a valid option.\n");
             break;
         }
         
