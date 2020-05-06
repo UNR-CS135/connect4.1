@@ -317,7 +317,7 @@ void displayBoard(int winner, int turnCounter, char player1Name[],char player2Na
       }
 
       // Outputs error if move cannot be made
-      if(movePossible == 0)
+      if(movePossible == 0 && winner == 0)
       {
         printf("Please enter a valid move: ");
         scanf("%d", &move);
